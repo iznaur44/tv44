@@ -1,77 +1,93 @@
-const apiKey = 'da40fc17411282846d4d4ef732875ba8';
-const card = document.querySelector('.card');
-const searchBox = document.querySelector('.card__input');
-const searchBtn = document.getElementById('searchBtn');
-const temp = document.querySelector('.card__title--temp');
-const humidity = document.getElementById('humidity');
-const cityName = document.getElementById('city');
-const wind = document.getElementById('wind');
-const icon = document.querySelector('.card__weatger-icon');
-const date = document.getElementById('date');
+let area = document.getElementById('area');
+let cell = document.getElementsByClassName('cell');
+let currentPlayer = document.getElementById('curPlyr');
 
+let player = "x";
+let stat = {
+    'x': 0,
+    'o': 0,
+    'd': 0
+};
+let winIndex = [
+    [1,2,3],
+    [4,5,6],
+    [7,8,9],
+    [1,4,7],
+    [2,5,8],
+    [3,6,9],
+    [1,5,9],
+    [3,5,7]
+];
 
-
-
- 
-const showDate = () => {
-    const now = new Date ();
-    const day = now.getDate();
-    const monthName = now.toLocaleString ('en', {month: 'long'});
-    date.innerHTML = `${day} ${monthName}`
+for(let i = 1; i <= 9; i++) {
+    area.innerHTML += "<div class='cell' pos=" + i + "></div>";
 }
 
-async function getWeatcher (city){
-
-    city = city.trim()
-    if (!city) return;
-
-    try{
-       const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
-
-
-
-       if(!response.ok) throw new Error('city not found');
-  const result = await response.json();
-  card.classList.add('active');
-  card.style.height = '530px';
-
-  const iconUrl = ` https://openweathermap.org/img/wn/${result.weather[0].icon}@4x.png`
-  icon.src = iconUrl
-
-
-cityName.innerHTML = result.name;
-humidity.innerHTML = `${ result.main.humidity}%`;
-wind.innerHTML = `${ result.wind.speed} m/s`;
-temp.innerHTML = `${ result.main.temp} °C`;
-
-
-
-    }
-  catch (err) { alert (err);
- 
-    }
+for(let i = 0; i < cell.length; i++) {
+    cell[i].addEventListener('click', cellClick);
 }
 
-searchBtn.addEventListener('click', () => {
-    getWeatcher(searchBox.value);
-})
-
-
-searchBox.addEventListener('keypress', (e) => {
-   
-    if(e.key === 'Enter'){
-        getWeatcher(searchBox.value);
+function cellClick() {
+    let data = [];
+    
+    if(!this.innerHTML) {
+        this.innerHTML = player;
+    } else {
         
+        return;
     }
-})
 
-
-document.addEventListener('click', (e) => {
-    if (card.classList.contains('active') && !card.contains(e.target)) {
-      searchBox.value = '';
-      card.classList.remove('active')
-      card.style.height = '230px'
+    for(let i in cell) {
+        if(cell[i].innerHTML === player) {
+            data.push(parseInt(cell[i].getAttribute('pos')));
+        }
     }
-  })
 
-showDate();
+    if(checkWin(data)) {
+        stat[player] += 1;
+        restart("Выграл: " + player);
+    } else {
+        let draw = true;
+        for(let i in cell) {
+            if(cell[i].innerHTML === '') draw = false;
+        }
+        if(draw) {
+            stat.d += 1;
+            restart("Ничья");
+        }
+    }
+
+    player = player === "x" ? "o" : "x";
+    currentPlayer.innerHTML = player.toUpperCase();
+}
+
+function checkWin(data) {
+    for(let i in winIndex) {
+        let win = true;
+        for(let j in winIndex[i]) {
+            let id = winIndex[i][j];
+            let ind = data.indexOf(id);
+
+            if(ind === -1) {
+                win = false;
+            }
+        }
+
+        if(win) return true;
+    }
+    return false;
+}
+
+function restart(text) {
+    alert(text);
+    for(let i = 0; i < cell.length; i++) {
+        cell[i].innerHTML = '';
+    }
+    updateStat();
+}
+
+function updateStat() {
+    document.getElementById('sX').innerHTML = stat.x;
+    document.getElementById('sO').innerHTML = stat.o;
+    document.getElementById('sD').innerHTML = stat.d;
+}

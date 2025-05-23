@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Крестики-нолики</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <h1>Крестики-нолики</h1>
+    </header>
+
+    <main class="content">
+      <section class="game">
+        <div class="current-player">
+          Сейчас ходит: <span id="curPlyr">X</span>
+        </div>
+
+        <div id="area" class="game-area"></div>
+      </section>
+
+      <section class="stat">
+        <table>
+          <thead>
+            <tr>
+              <th colspan="2">Статистика</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>X</td>
+              <td id="sX">0</td>
+            </tr>
+            <tr>
+              <td>O</td>
+              <td id="sO">0</td>
+            </tr>
+            <tr>
+              <td>Ничьи</td>
+              <td id="sD">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
